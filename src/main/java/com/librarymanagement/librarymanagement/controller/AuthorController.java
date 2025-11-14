@@ -20,7 +20,6 @@ public class AuthorController {
 
     @PostMapping
     public ResponseEntity<Author> createAuthor(@Valid @RequestBody CreateAuthorRequest request) {
-        System.out.println("===============hreklsdjskgjfsklgj");
         Author createdAuthor = authorService.createAuthor(request);
 
         URI location = ServletUriComponentsBuilder
@@ -34,7 +33,7 @@ public class AuthorController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Author> getAuthorById(@PathVariable Long id) {
-        Author placeholderAuthor = Author.builder().id(id).name("Placeholder").build();
-        return ResponseEntity.ok(placeholderAuthor);
+        Author author = authorService.getAuthorById(id);
+        return ResponseEntity.ok(author);
     }
 }

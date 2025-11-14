@@ -1,5 +1,6 @@
 package com.librarymanagement.librarymanagement.service.implementation;
 
+import com.librarymanagement.librarymanagement.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,5 +25,12 @@ public class AuthorServiceImpl implements AuthorService {
                 build();
 
         return authorRepository.save(newAuthor);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Author getAuthorById(Long authorId) {
+        return authorRepository.findById(authorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with ID: " + authorId));
     }
 }
