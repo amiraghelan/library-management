@@ -1,7 +1,9 @@
 package com.librarymanagement.librarymanagement.service.implementation;
 
+import com.librarymanagement.librarymanagement.dto.AuthorResponseDto;
 import com.librarymanagement.librarymanagement.dto.UpdateAuthorRequest;
 import com.librarymanagement.librarymanagement.exception.ResourceNotFoundException;
+import com.librarymanagement.librarymanagement.mapper.AuthorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import com.librarymanagement.librarymanagement.repository.AuthorRepository;
 import com.librarymanagement.librarymanagement.service.contract.AuthorService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,38 +24,40 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public Author createAuthor(CreateAuthorRequest request) {
-        Author newAuthor = Author.builder().
-                name(request.name()).
-                biography(request.biography()).
-                build();
+    public AuthorResponseDto createAuthor(CreateAuthorRequest request) {
+        Author newAuthor = Author.builder().name(request.name()).biography(request.biography()).build();
 
-        return authorRepository.save(newAuthor);
+        Author savedAuthor = authorRepository.save(newAuthor);
+
+        return AuthorMapper.toAuthorResponseDto(savedAuthor);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Author getAuthorById(Long authorId) {
-        return authorRepository.findById(authorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Author not found with ID: " + authorId));
+    public AuthorResponseDto getAuthorById(Long authorId) {
+        Author author = authorRepository.findById(authorId).orElseThrow(() -> new ResourceNotFoundException("Author not found with ID: " + authorId));
+        return AuthorMapper.toAuthorResponseDto(author);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Author> getAllAuthors() {
-        return authorRepository.findAll();
+    public List<AuthorResponseDto> getAllAuthors() {
+        return authorRepository.findAll().stream()
+                .map(AuthorMapper::toAuthorResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public Author updateAuthor(Long authorId, UpdateAuthorRequest updateRequest) {
+    public AuthorResponseDto updateAuthor(Long authorId, UpdateAuthorRequest updateRequest) {
         Author existingAuthor = authorRepository.findById(authorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with ID: " + authorId));
 
         existingAuthor.setName(updateRequest.name());
         existingAuthor.setBiography(updateRequest.biography());
 
-        return authorRepository.save(existingAuthor);
+        Author updatedAuthor = authorRepository.save(existingAuthor);
+        return AuthorMapper.toAuthorResponseDto(updatedAuthor); // Use the static mapper
     }
 
     @Override

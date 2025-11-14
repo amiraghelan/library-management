@@ -1,5 +1,6 @@
 package com.librarymanagement.librarymanagement.controller;
 
+import com.librarymanagement.librarymanagement.dto.AuthorResponseDto;
 import com.librarymanagement.librarymanagement.dto.CreateAuthorRequest;
 import com.librarymanagement.librarymanagement.dto.UpdateAuthorRequest;
 import com.librarymanagement.librarymanagement.model.Author;
@@ -21,33 +22,33 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @PostMapping
-    public ResponseEntity<Author> createAuthor(@Valid @RequestBody CreateAuthorRequest request) {
-        Author createdAuthor = authorService.createAuthor(request);
+    public ResponseEntity<AuthorResponseDto> createAuthor(@Valid @RequestBody CreateAuthorRequest request) {
+        AuthorResponseDto createdAuthor = authorService.createAuthor(request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(createdAuthor.getId())
+                .buildAndExpand(createdAuthor.id())
                 .toUri();
 
         return ResponseEntity.created(location).body(createdAuthor);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Author> getAuthorById(@PathVariable Long id) {
-        Author author = authorService.getAuthorById(id);
+    public ResponseEntity<AuthorResponseDto> getAuthorById(@PathVariable Long id) {
+        AuthorResponseDto author = authorService.getAuthorById(id);
         return ResponseEntity.ok(author);
     }
 
     @GetMapping
-    public ResponseEntity<List<Author>> getAllAuthors() {
-        List<Author> authors = authorService.getAllAuthors();
+    public ResponseEntity<List<AuthorResponseDto>> getAllAuthors() {
+        List<AuthorResponseDto> authors = authorService.getAllAuthors();
         return ResponseEntity.ok(authors);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthor(@PathVariable Long id, @Valid @RequestBody UpdateAuthorRequest request) {
-        Author updatedAuthor = authorService.updateAuthor(id, request);
+    public ResponseEntity<AuthorResponseDto> updateAuthor(@PathVariable Long id, @Valid @RequestBody UpdateAuthorRequest request) {
+        AuthorResponseDto updatedAuthor = authorService.updateAuthor(id, request);
         return ResponseEntity.ok(updatedAuthor);
     }
 

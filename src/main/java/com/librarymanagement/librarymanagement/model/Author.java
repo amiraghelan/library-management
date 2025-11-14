@@ -28,6 +28,7 @@ public class Author {
     @Column(columnDefinition = "TEXT")
     private String biography;
 
+    @Builder.Default
     @OneToMany(
             mappedBy = "author",
             cascade = CascadeType.ALL,
